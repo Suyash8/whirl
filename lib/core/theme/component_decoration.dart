@@ -15,8 +15,10 @@ class ComponentDecoration {
     Color? errorBorderColor,
     Color? hintColor,
     Color? textColor,
-  }) {
+  })
+  {
     final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(50.0),
       borderSide: BorderSide(
         color: borderColor ?? colorScheme.tertiary,
       ),
@@ -64,8 +66,41 @@ class ComponentDecoration {
 
 
       hintStyle: TextStyle(
-        color: hintColor ?? colorScheme.tertiary,
+        color: hintColor ?? colorScheme.onSurface.withOpacity(0.6),
       ),
+
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 16.0,
+      ),
+    );
+  }
+
+  static ButtonStyle buttonDecoration({
+  required ColorScheme colorScheme,
+    Color? backgroundColor,
+    Color? textColor,
+  })
+  {
+    return ButtonStyle(
+      backgroundColor: WidgetStateProperty.all<Color>(
+        backgroundColor ?? colorScheme.primary,
+      ),
+      foregroundColor: WidgetStateProperty.all<Color>(
+        textColor ?? colorScheme.onPrimary,
+      ),
+      shape: WidgetStateProperty.all<OutlinedBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+      ),
+      minimumSize: WidgetStateProperty.all<Size>(
+        const Size(double.infinity, 48.0),
+      ),
+      maximumSize: WidgetStateProperty.all<Size>(
+        const Size(double.infinity, 48.0),
+      ),
+
     );
   }
 }

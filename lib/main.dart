@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whirl/core/theme/app_theme.dart';
 import 'package:whirl/presentation/auth/screens/login_screen.dart';
@@ -8,9 +9,9 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-  Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+    Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     Firebase.initializeApp(
       options: DefaultFirebaseOptions.web,
@@ -25,11 +26,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget homeScreen() {
+      final User? user = FirebaseAuth.instance.currentUser;
+      return const LoginScreen();
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppTheme().theme,
-      home: LoginScreen(),
+      home: homeScreen(),
     );
   }
 }

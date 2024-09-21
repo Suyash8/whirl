@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Login {
-  Future<UserCredential> loginWithEmailAndPassword({
+  Future<UserCredential?> loginWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
