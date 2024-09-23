@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FetchUserData {
-  final CollectionReference _users = FirebaseFirestore.instance.collection(
-      'users');
+  final CollectionReference _users =
+      FirebaseFirestore.instance.collection('users');
 
   Future<Map<String, dynamic>?> fetch(String uid) async {
     try {
