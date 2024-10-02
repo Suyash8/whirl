@@ -2,15 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whirl/backend/auth/set_user_data.dart';
 import 'package:whirl/backend/auth/validate_amizone_credentials.dart';
+import 'package:whirl/presentation/auth/screens/logged_in_screen.dart';
 import 'package:whirl/presentation/auth/screens/login_screen.dart';
 import 'package:whirl/presentation/auth/widgets/auth_button.dart';
 import 'package:whirl/presentation/auth/widgets/input_field.dart';
 import 'package:whirl/presentation/auth/widgets/logout_button.dart';
 
 class AmizoneCredentialsInputScreen extends StatefulWidget {
-  final Function reloadWidget;
-
-  const AmizoneCredentialsInputScreen({super.key, required this.reloadWidget});
+  const AmizoneCredentialsInputScreen({super.key});
 
   @override
   State<AmizoneCredentialsInputScreen> createState() =>
@@ -20,13 +19,14 @@ class AmizoneCredentialsInputScreen extends StatefulWidget {
 class _AmizoneCredentialsInputScreenState
     extends State<AmizoneCredentialsInputScreen> {
   bool isPasswordVisible = false;
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  int saveCredentialsButtonState = 0;
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController idController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-    int saveCredentialsButtonState = 0;
+
 
     void changeSaveCredentialsButtonState(int state) {
       if (state < 0 || state > 3) {
@@ -57,7 +57,10 @@ class _AmizoneCredentialsInputScreenState
             if (value == null) {
               changeSaveCredentialsButtonState(2);
               Future.delayed(const Duration(seconds: 5), () {
-                widget.reloadWidget();
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const LoggedInScreen()));
+                }
               });
             } else {
               changeSaveCredentialsButtonState(3);
@@ -66,51 +69,63 @@ class _AmizoneCredentialsInputScreenState
         } catch (e) {
           changeSaveCredentialsButtonState(3);
         }
-
       }
     }
 
-    return Center(
-      child: Form(
-        key: formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      body: Center(
+        child: ListView(
+          shrinkWrap: true,
           children: [
-            //  add a form to input amizone credentials
-            const Text('Please enter your Amizone credentials'),
-            const SizedBox(height: 16.0),
-            InputField(
-              controller: idController,
-              hintText: "Amizone ID",
-              keyboardType: TextInputType.number,
-              validator: ValidateAmizoneCredentials().validateAmizoneID,
-            ),
-            const SizedBox(height: 16.0),
-            InputField(
-              controller: passwordController,
-              obscureText: !isPasswordVisible,
-              validator: ValidateAmizoneCredentials().validateAmizonePassword,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            Form(
+              key: formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //  add a form to input amizone credentials
+                    const Text('Please enter your Amizone credentials'),
+                    const SizedBox(height: 16.0),
+                    InputField(
+                      controller: idController,
+                      hintText: "Amizone ID",
+                      keyboardType: TextInputType.number,
+                      validator: ValidateAmizoneCredentials().validateAmizoneID,
+                    ),
+                    const SizedBox(height: 16.0),
+                    InputField(
+                      controller: passwordController,
+                      obscureText: !isPasswordVisible,
+                      validator:
+                          ValidateAmizoneCredentials().validateAmizonePassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
+                        },
+                      ),
+                      hintText: "Amizone Password",
+                    ),
+                    const SizedBox(height: 16.0),
+                    AuthButton(
+                      onPressed: () => saveCredentials(),
+                      text: 'Save Credentials',
+                      loadingText: 'Saving...',
+                      state: saveCredentialsButtonState,
+                    ),
+                    const SizedBox(height: 16.0),
+                    const LogoutButton(returnScreen: LoginScreen()),
+                  ],
                 ),
-                onPressed: () {
-                  setState(() {
-                    isPasswordVisible = !isPasswordVisible;
-                  });
-                },
               ),
-              hintText: "Amizone Password",
             ),
-            const SizedBox(height: 16.0),
-            AuthButton(
-              onPressed: () => saveCredentials(),
-              text: 'Save Credentials',
-              loadingText: 'Saving...',
-              state: saveCredentialsButtonState,
-            ),
-            const SizedBox(height: 16.0),
-            const LogoutButton(returnScreen: LoginScreen()),
           ],
         ),
       ),

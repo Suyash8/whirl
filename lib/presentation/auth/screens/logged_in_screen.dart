@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whirl/backend/auth/fetch_user_data.dart';
-import 'package:whirl/backend/auth/set_user_data.dart';
 import 'package:whirl/presentation/auth/screens/amizone_credentials_input_screen.dart';
 import 'package:whirl/presentation/auth/screens/login_screen.dart';
 import 'package:whirl/presentation/auth/widgets/auth_button.dart';
@@ -45,7 +44,9 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
                     const SizedBox(height: 16.0),
                     AuthButton(onPressed: reloadWidget, text: 'Retry'),
                     const SizedBox(height: 16.0),
-                    const LogoutButton(returnScreen: LoginScreen(),),
+                    const LogoutButton(
+                      returnScreen: LoginScreen(),
+                    ),
                   ],
                 ),
               );
@@ -55,10 +56,23 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
                   userData["amizone_password"] != null &&
                   userData["amizone_id"] != "" &&
                   userData["amizone_password"] != "") {
-                return HomeScreen(
-                    userData: userData, reloadWidget: reloadWidget);
+                Future.delayed(Duration.zero, () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomeScreen()));
+                });
+                // return const HomeScreen();
+              } else {
+                Future.delayed(Duration.zero, () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const AmizoneCredentialsInputScreen()));
+                });
+                // return const AmizoneCredentialsInputScreen();
               }
-              return AmizoneCredentialsInputScreen(reloadWidget: reloadWidget);
             }
             return const Center(
               child: Column(
@@ -66,7 +80,9 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
                 children: [
                   Text('Error logging in'),
                   SizedBox(height: 16.0),
-                  LogoutButton(returnScreen: LoginScreen(),),
+                  LogoutButton(
+                    returnScreen: LoginScreen(),
+                  ),
                 ],
               ),
             );
@@ -78,39 +94,12 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
 }
 
 class HomeScreen extends StatelessWidget {
-  final Map<String, dynamic> userData;
-  final Function reloadWidget;
-
-  const HomeScreen(
-      {super.key, required this.userData, required this.reloadWidget});
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Welcome ${userData["name"]}'),
-            Text('Your Amizone ID is ${userData["amizone_id"]}'),
-            Text('Your Amizone password is ${userData["amizone_password"]}'),
-            const SizedBox(height: 16.0),
-            AuthButton(
-                onPressed: () {
-                  SetUserData().set(FirebaseAuth.instance.currentUser!.uid, {
-                    "amizone_id": "",
-                    "amizone_password": "",
-                  });
-                  reloadWidget();
-                },
-                text: 'Delete Credentials'),
-            const SizedBox(height: 16.0),
-            const LogoutButton(returnScreen: LoginScreen()),
-          ],
-        ),
-      ),
+    return const Center(
+      child: Text('Home Screen'),
     );
   }
 }
-
