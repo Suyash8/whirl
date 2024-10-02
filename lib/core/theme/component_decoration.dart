@@ -15,10 +15,11 @@ class ComponentDecoration {
     Color? errorBorderColor,
     Color? hintColor,
     Color? textColor,
+    BorderRadius? borderRadius,
   })
   {
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(50.0),
+      borderRadius: borderRadius ?? BorderRadius.circular(5.0),
       borderSide: BorderSide(
         color: borderColor ?? colorScheme.tertiary,
       ),
@@ -30,14 +31,10 @@ class ComponentDecoration {
       helperText: helperText,
       errorText: errorText,
 
-      filled: true,
-      fillColor: backgroundColor ?? colorScheme.surfaceContainerHigh,
+      filled: backgroundColor != null,
+      fillColor: backgroundColor,
 
-      border: border.copyWith(
-        borderSide: border.borderSide.copyWith(
-          color: borderColor ?? colorScheme.outline,
-        ),
-      ),
+      border: border,
       enabledBorder: border.copyWith(
         borderSide: border.borderSide.copyWith(
           color: enabledBorderColor ?? colorScheme.outline,
@@ -80,6 +77,10 @@ class ComponentDecoration {
   required ColorScheme colorScheme,
     Color? backgroundColor,
     Color? textColor,
+    bool fill = true,
+  //   size
+    double width = double.infinity,
+    double height = 52.0,
   })
   {
     return ButtonStyle(
@@ -95,10 +96,10 @@ class ComponentDecoration {
         ),
       ),
       minimumSize: WidgetStateProperty.all<Size>(
-        const Size(double.infinity, 48.0),
+        Size(width, height),
       ),
       maximumSize: WidgetStateProperty.all<Size>(
-        const Size(double.infinity, 48.0),
+        Size(width, height),
       ),
 
     );

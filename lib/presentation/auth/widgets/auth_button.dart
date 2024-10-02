@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whirl/core/theme/component_decoration.dart';
+import 'package:whirl/core/theme/text_styles.dart';
 
 class AuthButton extends StatefulWidget {
   final VoidCallback onPressed;
@@ -37,7 +38,11 @@ class _AuthButtonState extends State<AuthButton> {
               ),
             ),
             const SizedBox(width: 16.0),
-            Text(widget.loadingText),
+            Text(widget.loadingText,
+                style: TextStyles.body.large.copyWith(
+                  fontWeight:
+                      TextStyles.fontWeightTextStyles.labelMediumProminent,
+                )),
           ],
         );
       } else if (widget.state == 2) {
@@ -45,7 +50,10 @@ class _AuthButtonState extends State<AuthButton> {
       } else if (widget.state == 3) {
         return const Icon(Icons.close);
       } else {
-        return Text(widget.text);
+        return Text(widget.text,
+            style: TextStyles.body.large.copyWith(
+              fontWeight: TextStyles.fontWeightTextStyles.labelMediumProminent,
+            ));
       }
     }
 

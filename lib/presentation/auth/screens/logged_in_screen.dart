@@ -27,48 +27,51 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
     }
 
     return Scaffold(
-      body: FutureBuilder(
-        future: FetchUserData().fetch(FirebaseAuth.instance.currentUser!.uid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder(
+          future: FetchUserData().fetch(FirebaseAuth.instance.currentUser!.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Error fetching user data'),
+                    const SizedBox(height: 16.0),
+                    AuthButton(onPressed: reloadWidget, text: 'Retry'),
+                    const SizedBox(height: 16.0),
+                    const LogoutButton(returnScreen: LoginScreen(),),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasData) {
+              final userData = snapshot.data!;
+              if (userData["amizone_id"] != null &&
+                  userData["amizone_password"] != null &&
+                  userData["amizone_id"] != "" &&
+                  userData["amizone_password"] != "") {
+                return HomeScreen(
+                    userData: userData, reloadWidget: reloadWidget);
+              }
+              return AmizoneCredentialsInputScreen(reloadWidget: reloadWidget);
+            }
             return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Error fetching user data'),
-                  const SizedBox(height: 16.0),
-                  AuthButton(onPressed: reloadWidget, text: 'Retry'),
-                  const SizedBox(height: 16.0),
-                  const LogoutButton(returnScreen: LoginScreen(),),
+                  Text('Error logging in'),
+                  SizedBox(height: 16.0),
+                  LogoutButton(returnScreen: LoginScreen(),),
                 ],
               ),
             );
-          } else if (snapshot.hasData) {
-            final userData = snapshot.data!;
-            if (userData["amizone_id"] != null &&
-                userData["amizone_password"] != null &&
-                userData["amizone_id"] != "" &&
-                userData["amizone_password"] != "") {
-              return HomeScreen(
-                  userData: userData, reloadWidget: reloadWidget);
-            }
-            return AmizoneCredentialsInputScreen(reloadWidget: reloadWidget);
-          }
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Error logging in'),
-                SizedBox(height: 16.0),
-                LogoutButton(returnScreen: LoginScreen(),),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
