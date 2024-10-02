@@ -1,0 +1,105 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:whirl/backend/auth/fetch_user_data.dart';
+import 'package:whirl/presentation/auth/screens/amizone_credentials_input_screen.dart';
+import 'package:whirl/presentation/auth/screens/login_screen.dart';
+import 'package:whirl/presentation/auth/widgets/auth_button.dart';
+import 'package:whirl/presentation/auth/widgets/logout_button.dart';
+
+class LoggedInScreen extends StatefulWidget {
+  const LoggedInScreen({super.key});
+
+  @override
+  State<LoggedInScreen> createState() => _LoggedInScreenState();
+}
+
+class _LoggedInScreenState extends State<LoggedInScreen> {
+  @override
+  Widget build(BuildContext context) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }
+
+    void reloadWidget() {
+      setState(() {});
+    }
+
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder(
+          future: FetchUserData().fetch(FirebaseAuth.instance.currentUser!.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Error fetching user data'),
+                    const SizedBox(height: 16.0),
+                    AuthButton(onPressed: reloadWidget, text: 'Retry'),
+                    const SizedBox(height: 16.0),
+                    const LogoutButton(
+                      returnScreen: LoginScreen(),
+                    ),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasData) {
+              final userData = snapshot.data!;
+              if (userData["amizone_id"] != null &&
+                  userData["amizone_password"] != null &&
+                  userData["amizone_id"] != "" &&
+                  userData["amizone_password"] != "") {
+                Future.delayed(Duration.zero, () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomeScreen()));
+                });
+                // return const HomeScreen();
+              } else {
+                Future.delayed(Duration.zero, () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const AmizoneCredentialsInputScreen()));
+                });
+                // return const AmizoneCredentialsInputScreen();
+              }
+            }
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error logging in'),
+                  SizedBox(height: 16.0),
+                  LogoutButton(
+                    returnScreen: LoginScreen(),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Home Screen'),
+    );
+  }
+}
