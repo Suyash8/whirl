@@ -1,16 +1,40 @@
-# whirl
+# 🌪️ Whirl
 
-amizone helper - whirl
+**Whirl** is a Flutter-based mobile app designed to enhance the UI/UX of the Amizone student portal. It offers a cleaner, more intuitive interface along with offline caching of essential data and an autonomous login feature for a seamless experience.
 
-## Getting Started
+## 📱 Features
 
-This project is a starting point for a Flutter application.
+- Clean and user-friendly design
+- Automatic login for quick access
+- Offline caching of key student data
+- Optimized performance compared to the Amizone website
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Built With
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Flutter](https://flutter.dev/)
+- Dart
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Getting Started
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/whirl.git
+cd whirl
+```
+
+2. Install dependencies:
+
+```bash
+flutter pub get
+```
+
+3. Run the app:
+
+```bash
+flutter run
+```
+
+## 📄 License
+
+MIT License – use it freely.
